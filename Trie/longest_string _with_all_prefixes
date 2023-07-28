@@ -1,0 +1,74 @@
+#include <bits/stdc++.h> 
+
+struct Node{
+    Node *link[26];
+    bool flag=false;
+
+    bool containKey(char ch){
+        return (link[ch-'a']!=NULL);
+    }
+    void put(char ch, Node *node){
+        link[ch-'a']=node;
+    }
+    Node *get(char ch){
+        return link[ch-'a'];
+    }
+    void setEnd(){
+        flag=true;
+    }
+    bool isEnd(){
+        return flag;
+    }
+};
+class Trie{
+    private:
+        Node *root;
+    public:
+        Trie(){
+            root=new Node();
+        }
+
+    public:void insert(string word) {
+            Node *node=root;
+            for(int i=0;i<word.size();i++){
+                if(!node->containKey(word[i])){
+                    node->put(word[i],new Node());
+                }
+                node = node->get(word[i]);
+            }
+            node->setEnd();
+        }
+
+    public:bool checkPrefixExists(string word){
+            bool fl=true;
+            Node *node=root;
+            for(int i=0;i<word.length();i++){
+                if(node->containKey(word[i])){
+                    node=node->get(word[i]);
+                    if(node->isEnd()==false) return false;
+                }
+                return false;
+
+            }
+            return true;
+        }
+};
+string completeString(int n, vector<string> &a){
+    Trie trie;
+    for(auto &it: a){
+        trie.insert(it);
+    }
+    string len="";
+    for(auto &it: a){
+        if(trie.checkPrefixExists(it)){
+            if(it.length()>len.length()){
+                len=it;
+            }
+            else if(it.length()==len.length() && it<len){
+                len=it;
+            }
+        }
+    }
+    if(len=="") return "None";
+    else return len;
+}
